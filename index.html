@@ -28,10 +28,10 @@
     // Définition de la position de la balle
     let y = canvas.height-30;
 
-    // Cette variable correspond a la vitesse de déplacement de la balle sur l'axe horizontal
+    // Cette variable correspond a la vitesse de déplacement et de la direction de la balle sur l'axe horizontal
     let dx = 2;
 
-    // Cette variable correspond a la vitesse de déplacement de la balle sur l'axe vertical
+    // Cette variable correspond a la vitesse de déplacement de de la direction de la balle sur l'axe vertical
     let dy = -2;
 
     /**
@@ -56,10 +56,10 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawBall();
 
-        if (x - dx > canvas.width - ballRadius || x + dx < ballRadius) {
+        if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
             dx = -dx;
         }
-        if (y - dy > canvas.height - ballRadius || y + dy < ballRadius) {
+        if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
             dy = -dy;
         }
 
