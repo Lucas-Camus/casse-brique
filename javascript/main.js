@@ -18,16 +18,30 @@ let dx = 2;
 
 // Cette variable correspond a la vitesse de déplacement de de la direction de la balle sur l'axe vertical
 let dy = -2;
+
 // Cette variable correspond a la hauteur de la raquette contrôlable
 const paddleHeight = 10;
+
 // Cette variable correspond a la largeur de la raquette contrôlable
 const paddleWidth = 75;
+
 // Cette variable définis le point de départ de la raquette sur l'axe des X
 let paddleX = (canvas.width-paddleWidth)/2;
-// Cette varibale permet de mémorise l'état des touches (touches de droite)
+
+// Cette varibale permet de mémorise l'état des touches (fleche de droite ou touche D)
 let rightPressed = false;
-// Cette varibale permet de mémorise l'état des touches (touches de gauche)
+
+// Cette varibale permet de mémorise l'état des touches (fleche de gauche ou touche Q)
 let leftPressed = false;
+
+// Variable pour la couleur de la balle
+const ballColor = "#9f0303";
+
+// Variable pour la couleur de la raquette
+const paddleColor = "#9f0303";
+
+// Variable pour la vitesse de déplacement de la raquette de 6px (vers la Droite ou vers la Gauche)
+let paddleMovement = 6;
 
 /**
  * La fonction drawBall() permet de dessiner la balle
@@ -37,7 +51,7 @@ let leftPressed = false;
 function drawBall() {
     ctx.beginPath();
     ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-    ctx.fillStyle = "#9f0303";
+    ctx.fillStyle = ballColor;
     ctx.fill();
     ctx.closePath();
 }
@@ -48,7 +62,7 @@ function drawBall() {
 function drawPaddle() {
     ctx.beginPath();
     ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
-    ctx.fillStyle = "#9f0303";
+    ctx.fillStyle = paddleColor;
     ctx.fill();
     ctx.closePath();
 }
@@ -65,59 +79,67 @@ function clearBall() {
     drawBall();
     drawPaddle();
 
-    if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+    if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
         dx = -dx;
     }
-    if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+    if(y + dy < ballRadius) {
         dy = -dy;
     }
-
-    x += dx;
-    y += dy;
+    else if(y + dy > canvas.height-ballRadius) {
+        if(x > paddleX && x < paddleX + paddleWidth) {
+            dy = -dy;
+        }
+        else {
+            alert("GAME OVER");
+            document.location.reload();
+        }
+    }
 
     if (rightPressed) {
-        paddleX += 6;
+        paddleX += paddleMovement;
         if (paddleX + paddleWidth > canvas.width){
             paddleX = canvas.width - paddleWidth;
         }
     }
     else if (leftPressed) {
-        paddleX -= 6;
+        paddleX -= paddleMovement;
         if (paddleX < 0){
-            paddleX = 0;
+            paddleX = paddleMovement;
         }
     }
+    x += dx;
+    y += dy;
 }
 
 document.addEventListener("keydown", keyDownHandler, false)
 document.addEventListener("keyup", keyUpHandler, false)
 
 /**
- * La fonction keyDownHandler sert à se que lorque l'event keyDown est déclenché lors de l'appui de la
- * touche de Droite, elle est executée.
+ * La fonction keyDownHandler sert à se que lorque l'event keyDown est déclenché (lorsque l'on appui sur
+ * les touches de Droite ou de Gauche), elle est executée.
  */
 function keyDownHandler(e) {
-    if(e.key == "Right" || e.key == "ArrowRight") {
+    if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d") {
         rightPressed = true;
     }
-    else if(e.key == "Left" || e.key == "ArrowLeft") {
+    else if(e.key == "Left" || e.key == "ArrowLeft" || e.key == "q") {
         leftPressed = true;
     }
 }
 
 /**
- * La fonction keyUpHandler sert à se que lorque l'event keyUp est déclenché lors de l'appui de la
- * touche de Gauche, elle est executée.
+ * La fonction keyUpHandler sert à se que lorque l'event keyUp est déclenché (lorsque l'on appui plus sur
+ * les touches de Droite ou de Gauche), elle est executée.
  */
 function keyUpHandler(e) {
-    if(e.key == "Right" || e.key == "ArrowRight") {
+    if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d") {
         rightPressed = false;
     }
-    else if(e.key == "Left" || e.key == "ArrowLeft") {
+    else if(e.key == "Left" || e.key == "ArrowLeft" || e.key == "q") {
         leftPressed = false;
     }
 }
 /**
  * Affichage de la balle toute les 10ms
  */
-setInterval(clearBall, 10);
+let interval = setInterval(clearBall, 10);
