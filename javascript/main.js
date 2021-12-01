@@ -74,7 +74,7 @@ function drawPaddle() {
  * Et si on presse une des deux touches (droite ou gauche) déplacer la raquette de droite a gauche de 6px sans
  * pour autant que la raquette sorte du canvas.
  */
-function clearBall() {
+function padBall() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
     drawPaddle();
@@ -111,9 +111,6 @@ function clearBall() {
     y += dy;
 }
 
-document.addEventListener("keydown", keyDownHandler, false)
-document.addEventListener("keyup", keyUpHandler, false)
-
 /**
  * La fonction keyDownHandler sert à se que lorque l'event keyDown est déclenché (lorsque l'on appui sur
  * les touches de Droite ou de Gauche), elle est executée.
@@ -139,7 +136,11 @@ function keyUpHandler(e) {
         leftPressed = false;
     }
 }
+
+document.addEventListener("keydown", keyDownHandler, false)
+document.addEventListener("keyup", keyUpHandler, false)
+
 /**
  * Affichage de la balle toute les 10ms
  */
-let interval = setInterval(clearBall, 10);
+let interval = setInterval(padBall, 10);
