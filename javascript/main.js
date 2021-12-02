@@ -61,10 +61,10 @@ let brickHeight = 20;
 // Cette variable permet de définir la grosseur de chaque briques
 let brickPadding = 10;
 
-// Cette variable permet de définir ...
+// Cette variable permet de définir la marge en haut des briques
 let brickOffsetTop = 30;
 
-// Cette variable permet de définir ...
+// Cette variable permet de définir la marge sur le côté gauche
 let brickOffsetLeft = 30;
 
 // Cette variable contient un tableau vide a deux dimensions :
@@ -77,10 +77,32 @@ let bricks = [];
 for(let c=0; c<brickColumnCount; c++) {
     bricks[c] = [];
     for(let r=0; r<brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0 };
+        bricks[c][r] = { x: 0, y: 0, status: 1 };
     }
 }
 
+
+/**
+ * Cette fonction collisionDetection() permet de détecter a quel moment la
+ * balle rentre en collision avec les briques
+ * En calculant si la position X de la balle est supérieur a la position X de la brique
+ * ET si la position X des la balle est inférieur a la position X de la brique + sa largeur
+ * ET si la position Y de la balle est supérieur a la position Y de la brique
+ * ET si la position Y de la balle est inférieur a la position Y de la brique + sa hauteur
+ */
+function collisionDetection() {
+    for(let c=0; c<brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+            let b = bricks[c][r];
+            if (b.status == 1) {
+                if(x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                    dy = -dy;
+                    b.status = 0;
+                }
+            }
+        }
+    }
+}
 /**
  * La fonction drawBall() permet de dessiner la balle
  * Lui donner la taille que l'on souhaite
@@ -114,15 +136,17 @@ function drawPaddle() {
 function drawBricks() {
     for(let c=0; c<brickColumnCount; c++) {
         for(let r=0; r<brickRowCount; r++) {
-            let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-            let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
-            bricks[c][r].x = brickX;
-            bricks[c][r].y = brickY;
-            ctx.beginPath();
-            ctx.rect(brickX, brickY, brickWidth, brickHeight);
-            ctx.fillStyle = bricksColor;
-            ctx.fill();
-            ctx.closePath();
+            if(bricks[c][r].status == 1){
+                let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+                let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+                bricks[c][r].x = brickX;
+                bricks[c][r].y = brickY;
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillStyle = bricksColor;
+                ctx.fill();
+                ctx.closePath();
+            }
         }
     }
 }
@@ -139,6 +163,7 @@ function padBall() {
     drawBricks();
     drawBall();
     drawPaddle();
+    collisionDetection()
 
     if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
         dx = -dx;
