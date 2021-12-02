@@ -67,6 +67,15 @@ let brickOffsetTop = 30;
 // Cette variable permet de définir la marge sur le côté gauche
 let brickOffsetLeft = 30;
 
+// Variable qui permet de stocker le score
+let score = 0;
+
+// Cette variable stock la font ainsi que la taille de l'écriture
+const fontScore = "16px Arial";
+
+// Variable pour la couleur du Score
+const scoreColor = "#9f0303";
+
 // Cette variable contient un tableau vide a deux dimensions :
 // - une qui contiendra les colonnes de briques (c)
 // - une qui contiendra les lignes de briques (r)
@@ -89,6 +98,10 @@ for(let c=0; c<brickColumnCount; c++) {
  * ET si la position X des la balle est inférieur a la position X de la brique + sa largeur
  * ET si la position Y de la balle est supérieur a la position Y de la brique
  * ET si la position Y de la balle est inférieur a la position Y de la brique + sa hauteur
+ * On lui dit ensuite que le "statut" de chaque brique est de zéro (pas de collision, en cas de collision le statut
+ * passera a 1)
+ * On incrémente de 1 à chaque brique détruite
+ * Et si toutes les briques du plateau ont été détruites, on affichera le message présent dans l'alert
  */
 function collisionDetection() {
     for(let c=0; c<brickColumnCount; c++) {
@@ -98,10 +111,25 @@ function collisionDetection() {
                 if(x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                     dy = -dy;
                     b.status = 0;
+                    score++;
+                    if(score == brickRowCount*brickColumnCount){
+                        alert("Bravo ! Vous avez détruit toutes les briques !")
+                        document.location.reload();
+                        clearInterval(interval);
+                    }
                 }
             }
         }
     }
+}
+
+/**
+ * La fonction drawSrore() permet d'afficher/calculer le score de notre partie en cours
+ */
+function drawScore() {
+    ctx.font = fontScore;
+    ctx.fillStyle = scoreColor;
+    ctx.fillText("Score: "+score, 8, 20);
 }
 /**
  * La fonction drawBall() permet de dessiner la balle
@@ -160,10 +188,11 @@ function drawBricks() {
  */
 function padBall() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawScore();
     drawBricks();
     drawBall();
     drawPaddle();
-    collisionDetection()
+    collisionDetection();
 
     if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
         dx = -dx;
