@@ -40,8 +40,46 @@ const ballColor = "#9f0303";
 // Variable pour la couleur de la raquette
 const paddleColor = "#9f0303";
 
+// Variable pour la couleur des briques
+const bricksColor = "#9f0303";
+
 // Variable pour la vitesse de déplacement de la raquette de 6px (vers la Droite ou vers la Gauche)
 let paddleMovement = 6;
+
+// Cette variable permet de définir le nombre de ligne de briques
+let brickRowCount = 3;
+
+// Cette variable permet de définir le nombre de colonne de briques
+let brickColumnCount = 5;
+
+// Cette variable permet de définir la largeur de chaque briques
+let brickWidth = 75;
+
+// Cette variable permet de de définir la hauteur de chaque briques
+let brickHeight = 20;
+
+// Cette variable permet de définir la grosseur de chaque briques
+let brickPadding = 10;
+
+// Cette variable permet de définir ...
+let brickOffsetTop = 30;
+
+// Cette variable permet de définir ...
+let brickOffsetLeft = 30;
+
+// Cette variable contient un tableau vide a deux dimensions :
+// - une qui contiendra les colonnes de briques (c)
+// - une qui contiendra les lignes de briques (r)
+// Et on ferra une boucle a l'intérieur de ces deux dimensions pour incrémenter le
+// nombre de colonnes et de lignes qu'il faut.
+// Avec les bonnes "coordonnées" (x et y) de chaque briques
+let bricks = [];
+for(let c=0; c<brickColumnCount; c++) {
+    bricks[c] = [];
+    for(let r=0; r<brickRowCount; r++) {
+        bricks[c][r] = { x: 0, y: 0 };
+    }
+}
 
 /**
  * La fonction drawBall() permet de dessiner la balle
@@ -68,14 +106,37 @@ function drawPaddle() {
 }
 
 /**
+ * La fonction drawBricks() permet d'afficher toutes les briques,
+ * en parcourant le deux dimensions du tableau avec des for et en donnant
+ * aux briques des coordonnées précise
+ * leurs taille et leurs couleur
+ */
+function drawBricks() {
+    for(let c=0; c<brickColumnCount; c++) {
+        for(let r=0; r<brickRowCount; r++) {
+            let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+            let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = bricksColor;
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+}
+/**
  * La fonction clearBall() elle, permet d'effacer la trainée laisser par l'affichage de la balle
  * Redéssine la balle à nouveau,
+ * Déssine la raquette,
  * Calcul pour voir a quel moment la balle rebondit sur le "mur",
  * Et si on presse une des deux touches (droite ou gauche) déplacer la raquette de droite a gauche de 6px sans
  * pour autant que la raquette sorte du canvas.
  */
 function padBall() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBricks();
     drawBall();
     drawPaddle();
 
@@ -92,19 +153,29 @@ function padBall() {
         else {
             alert("GAME OVER");
             document.location.reload();
+            clearInterval(interval);
         }
     }
 
+/**
+ * Lorsque j'appui sur la touche de droite, je déplace mon paddle vers la droite,
+ * si le point de départ du paddle + la largeur du paddle, est supérieur a la largeur de mon canvas, alors la raquette va sortir,
+ * donc je replace le paddle, a la position largeur du canvas moins largeur du paddle.
+ */
     if (rightPressed) {
         paddleX += paddleMovement;
         if (paddleX + paddleWidth > canvas.width){
             paddleX = canvas.width - paddleWidth;
         }
     }
+/**
+ * Lorsque j'appui sur la touche de gauche, je déplace mon paddle vers la gauche,
+ * si le point de départ du paddle est inférieur à 0 , je place le paddle en position 0.
+ */
     else if (leftPressed) {
         paddleX -= paddleMovement;
         if (paddleX < 0){
-            paddleX = paddleMovement;
+            paddleX = 0;
         }
     }
     x += dx;
