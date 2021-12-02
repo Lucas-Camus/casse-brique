@@ -92,19 +92,29 @@ function padBall() {
         else {
             alert("GAME OVER");
             document.location.reload();
+            clearInterval(interval);
         }
     }
 
+/**
+ * Lorsque j'appui sur la touche de droite, je déplace mon paddle vers la droite,
+ * si le point de départ du paddle + la largeur du paddle, est supérieur a la largeur de mon canvas, alors la raquette va sortir,
+ * donc je replace le paddle, a la position largeur du canvas moins largeur du paddle.
+ */
     if (rightPressed) {
         paddleX += paddleMovement;
         if (paddleX + paddleWidth > canvas.width){
             paddleX = canvas.width - paddleWidth;
         }
     }
+/**
+ * Lorsque j'appui sur la touche de gauche, je déplace mon paddle vers la gauche,
+ * si le point de départ du paddle est inférieur à 0 , je place le paddle en position 0.
+ */
     else if (leftPressed) {
         paddleX -= paddleMovement;
         if (paddleX < 0){
-            paddleX = paddleMovement;
+            paddleX = 0;
         }
     }
     x += dx;
