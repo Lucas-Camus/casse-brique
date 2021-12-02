@@ -71,10 +71,10 @@ let brickOffsetLeft = 30;
 let score = 0;
 
 // Cette variable stock la font ainsi que la taille de l'écriture
-let fontScore = "16px Arial";
+const fontScore = "16px Arial";
 
 // Variable pour la couleur du Score
-let scoreColor = "#9f0303";
+const scoreColor = "#9f0303";
 
 // Cette variable contient un tableau vide a deux dimensions :
 // - une qui contiendra les colonnes de briques (c)
