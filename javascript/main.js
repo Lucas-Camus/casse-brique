@@ -71,10 +71,13 @@ let brickOffsetLeft = 30;
 let score = 0;
 
 // Cette variable stock la font ainsi que la taille de l'écriture
-const fontScore = "16px Arial";
+const font = "16px Arial";
 
 // Variable pour la couleur du Score
-const scoreColor = "#9f0303";
+const color = "#9f0303";
+
+// Variable pour le compteur de vie
+let lives = 3;
 
 // Cette variable contient un tableau vide a deux dimensions :
 // - une qui contiendra les colonnes de briques (c)
@@ -115,7 +118,6 @@ function collisionDetection() {
                     if(score == brickRowCount*brickColumnCount){
                         alert("Bravo ! Vous avez détruit toutes les briques !")
                         document.location.reload();
-                        clearInterval(interval);
                     }
                 }
             }
@@ -127,9 +129,18 @@ function collisionDetection() {
  * La fonction drawSrore() permet d'afficher/calculer le score de notre partie en cours
  */
 function drawScore() {
-    ctx.font = fontScore;
-    ctx.fillStyle = scoreColor;
+    ctx.font = font;
+    ctx.fillStyle = color;
     ctx.fillText("Score: "+score, 8, 20);
+}
+
+/**
+ * La fonction drawlives() permet d'afficher le nombre de vie de joueur en au droite du canvas
+ */
+function drawLives() {
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.fillText("Lives: "+lives, canvas.width-65, 20);
 }
 /**
  * La fonction drawBall() permet de dessiner la balle
@@ -179,16 +190,21 @@ function drawBricks() {
     }
 }
 /**
- * La fonction clearBall() elle, permet d'effacer la trainée laisser par l'affichage de la balle
+ * La fonction padBall() elle, permet d'effacer la trainée laisser par l'affichage de la balle
  * Redéssine la balle à nouveau,
+ * Déssine le Score,
+ * Déssine le nb de vies restantes,
+ * Déssine les bricks,
  * Déssine la raquette,
  * Calcul pour voir a quel moment la balle rebondit sur le "mur",
  * Et si on presse une des deux touches (droite ou gauche) déplacer la raquette de droite a gauche de 6px sans
  * pour autant que la raquette sorte du canvas.
+ * Et pour finir, décrémente le nombre de vies quand la balles touches le bas du canvas
  */
 function padBall() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawScore();
+    drawLives();
     drawBricks();
     drawBall();
     drawPaddle();
@@ -205,9 +221,18 @@ function padBall() {
             dy = -dy;
         }
         else {
-            alert("GAME OVER");
-            document.location.reload();
-            clearInterval(interval);
+            lives--;
+            if (!lives) {
+                alert("GAME OVER");
+                document.location.reload();
+            }
+            else {
+                x = canvas.width/2;
+                y = canvas.height-30;
+                dx = 2;
+                dy = -2;
+                paddleX = (canvas.width-paddleWidth)/2;
+            }
         }
     }
 
@@ -234,6 +259,7 @@ function padBall() {
     }
     x += dx;
     y += dy;
+    requestAnimationFrame(padBall);
 }
 
 /**
@@ -279,4 +305,4 @@ document.addEventListener("mousemove", mouseMoveHandler, false);
 /**
  * Affichage de la balle toute les 10ms
  */
-let interval = setInterval(padBall, 10);
+padBall();
