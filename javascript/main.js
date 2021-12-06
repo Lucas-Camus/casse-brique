@@ -46,11 +46,17 @@ const bricksColor = "#9f0303";
 // Variable pour la vitesse de déplacement de la raquette de 6px (vers la Droite ou vers la Gauche)
 let paddleMovement = 6;
 
-// Cette variable permet de définir le nombre de ligne de briques
+// Cette variable permet de définir le nombre de ligne de briques pour le level 1
 let brickRowCount = 3;
 
-// Cette variable permet de définir le nombre de colonne de briques
-let brickColumnCount = 5;
+// Cette variable permet de définir le nombre de ligne de briques pour le level 2
+let brickRowCount2 = 5;
+
+// Cette variable permet de définir le nombre de colonne de briques pour le level 1
+let brickColumnCount = 11;
+
+// Cette variable permet de définir le nombre de colonne de briques pour le level 2
+let brickColumnCount2 = 8;
 
 // Cette variable permet de définir la largeur de chaque briques
 let brickWidth = 75;
@@ -65,7 +71,7 @@ let brickPadding = 10;
 let brickOffsetTop = 30;
 
 // Cette variable permet de définir la marge sur le côté gauche
-let brickOffsetLeft = 30;
+let brickOffsetLeft = 17;
 
 // Variable qui permet de stocker le score
 let score = 0;
@@ -78,6 +84,9 @@ const color = "#9f0303";
 
 // Variable pour le compteur de vie
 let lives = 3;
+
+// Variable pour les levels
+let level = 1;
 
 // Cette variable contient un tableau vide a deux dimensions :
 // - une qui contiendra les colonnes de briques (c)
@@ -118,6 +127,7 @@ function collisionDetection() {
                     if(score == brickRowCount*brickColumnCount){
                         alert("Bravo ! Vous avez détruit toutes les briques !")
                         document.location.reload();
+                        level++;
                     }
                 }
             }
@@ -132,6 +142,15 @@ function drawScore() {
     ctx.font = font;
     ctx.fillStyle = color;
     ctx.fillText("Score: "+score, 8, 20);
+}
+
+/**
+ * La fonction drawLevel() permet d'afficher le level auquel on se trouve
+ */
+function drawLevel() {
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.fillText("Level: "+level, canvas.width-500, 20);
 }
 
 /**
@@ -173,22 +192,43 @@ function drawPaddle() {
  * leurs taille et leurs couleur
  */
 function drawBricks() {
-    for(let c=0; c<brickColumnCount; c++) {
-        for(let r=0; r<brickRowCount; r++) {
-            if(bricks[c][r].status == 1){
-                let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-                let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
-                bricks[c][r].x = brickX;
-                bricks[c][r].y = brickY;
-                ctx.beginPath();
-                ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                ctx.fillStyle = bricksColor;
-                ctx.fill();
-                ctx.closePath();
+    if (level === 1) {
+        for(let c=0; c<brickColumnCount; c++) {
+            for(let r=0; r<brickRowCount; r++) {
+                if(bricks[c][r].status == 1){
+                    let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+                    let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+                    bricks[c][r].x = brickX;
+                    bricks[c][r].y = brickY;
+                    ctx.beginPath();
+                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                    ctx.fillStyle = bricksColor;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+        }
+    }
+    else if (level === 2) {
+        for(let c=0; c<brickColumnCount2; c++) {
+            for(let r=0; r<brickRowCount2; r++) {
+                if(bricks[c][r].status == 1){
+                    let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+                    let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+                    bricks[c][r].x = brickX;
+                    bricks[c][r].y = brickY;
+                    ctx.beginPath();
+                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                    ctx.fillStyle = bricksColor;
+                    ctx.fill();
+                    ctx.closePath();
+                }
             }
         }
     }
 }
+
+
 /**
  * La fonction padBall() elle, permet d'effacer la trainée laisser par l'affichage de la balle
  * Redéssine la balle à nouveau,
@@ -204,6 +244,7 @@ function drawBricks() {
 function padBall() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawScore();
+    drawLevel();
     drawLives();
     drawBricks();
     drawBall();
