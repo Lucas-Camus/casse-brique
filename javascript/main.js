@@ -35,28 +35,49 @@ let rightPressed = false;
 let leftPressed = false;
 
 // Variable pour la couleur de la balle
-const ballColor = "#9f0303";
+let ballColor = "#000000";
 
 // Variable pour la couleur de la raquette
-const paddleColor = "#9f0303";
+let paddleColor = "#9f0303";
 
 // Variable pour la couleur des briques
-const bricksColor = "#9f0303";
+let bricksColor = "#9f0303";
+
+// Variable pour la couleur du score
+let scoreColor = "#000000";
+
+// Variable pour la couleure du level
+let levelColor = "#000000";
+
+// Variable pour la couleure du compteur de vies
+let livesColor = "#000000";
 
 // Variable pour la vitesse de déplacement de la raquette de 6px (vers la Droite ou vers la Gauche)
 let paddleMovement = 6;
 
-// Cette variable permet de définir le nombre de ligne de briques pour le level 1
-let brickRowCount = 3;
-
 // Cette variable permet de définir le nombre de ligne de briques pour le level 2
-let brickRowCount2 = 5;
-
-// Cette variable permet de définir le nombre de colonne de briques pour le level 1
-let brickColumnCount = 11;
+const brickRowLevel1 = 3;
 
 // Cette variable permet de définir le nombre de colonne de briques pour le level 2
-let brickColumnCount2 = 8;
+const brickColumnLevel1 = 11;
+
+// Cette variable permet de définir le nombre de ligne de briques pour le level 2
+const brickRowLevel2 = 5;
+
+// Cette variable permet de définir le nombre de colonne de briques pour le level 2
+const brickColumnLevel2 = 11;
+
+// Cette variable permet de définir le nombre de colonne de briques pour le level 2
+const brickRowLevel3 = 7;
+
+// Cette variable permet de définir le nombre de colonne de briques pour le level 2
+const brickColumnLevel3 = 11;
+
+// Cette variable permet de définir le nombre de colonne de briques pour le level 1
+let brickColumnCount = brickColumnLevel1;
+
+// Cette variable permet de définir le nombre de ligne de briques pour le level 1
+let brickRowCount = brickRowLevel1;
 
 // Cette variable permet de définir la largeur de chaque briques
 let brickWidth = 75;
@@ -79,30 +100,51 @@ let score = 0;
 // Cette variable stock la font ainsi que la taille de l'écriture
 const font = "16px Arial";
 
-// Variable pour la couleur du Score
-const color = "#9f0303";
-
 // Variable pour le compteur de vie
 let lives = 3;
 
 // Variable pour les levels
 let level = 1;
 
-// Cette variable contient un tableau vide a deux dimensions :
-// - une qui contiendra les colonnes de briques (c)
-// - une qui contiendra les lignes de briques (r)
-// Et on ferra une boucle a l'intérieur de ces deux dimensions pour incrémenter le
-// nombre de colonnes et de lignes qu'il faut.
-// Avec les bonnes "coordonnées" (x et y) de chaque briques
+// Cette contient un tableau de bricks vide
 let bricks = [];
-for(let c=0; c<brickColumnCount; c++) {
-    bricks[c] = [];
-    for(let r=0; r<brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0, status: 1 };
+
+/**
+ * Cette fonction contient un tableau vide a deux dimensions :
+ * - une qui contiendra les colonnes de briques (c)
+ * - une qui contiendra les lignes de briques (r)
+ * Et on ferra une boucle a l'intérieur de ces deux dimensions pour incrémenter le
+ * nombre de colonnes et de lignes qu'il faut.
+ * Avec les bonnes "coordonnées" (x et y) de chaque briques
+ * @param column
+ * @param row
+ * @returns {*}
+ */
+function setUpBricks(column, row) {
+    let newBricks = [];
+    for(let c=0; c<column; c++) {
+        newBricks[c] = [];
+        for(let r=0; r<row; r++) {
+            newBricks[c][r] = { x: 0, y: 0, status: 1 };
+        }
     }
+
+    return newBricks;
 }
+bricks = setUpBricks(brickColumnCount, brickRowCount);
 
 
+/**
+ * Cette fonction permet de faire reset la balle
+ * (Center en bas du canvas)
+ */
+function resetBall() {
+    x = canvas.width / 2;
+    y = canvas.height - 30;
+    dx = 2;
+    dy = -2;
+    paddleX = (canvas.width - paddleWidth) / 2;
+}
 /**
  * Cette fonction collisionDetection() permet de détecter a quel moment la
  * balle rentre en collision avec les briques
@@ -119,15 +161,42 @@ function collisionDetection() {
     for(let c=0; c<brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
             let b = bricks[c][r];
-            if (b.status == 1) {
+            if (b.status === 1) {
                 if(x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                     dy = -dy;
                     b.status = 0;
                     score++;
-                    if(score == brickRowCount*brickColumnCount){
-                        alert("Bravo ! Vous avez détruit toutes les briques !")
-                        document.location.reload();
+                    if(score === brickRowCount * brickColumnCount){
+                        alert("Bravo ! Vous avez détruit toutes les briques !");
                         level++;
+                        switch(level){
+                            case 2:
+                                score = 0;
+                                brickColumnCount = brickColumnLevel2;
+                                brickRowCount = brickRowLevel2;
+                                bricks = setUpBricks(brickColumnCount, brickRowCount);
+                                resetBall();
+                                bricksColor = "#00a0ff";
+                                paddleColor = "#beb000";
+                                ballColor = "#beb000";
+                                break;
+                            case 3:
+                                score = 0;
+                                brickColumnCount = brickColumnLevel3;
+                                brickRowCount = brickRowLevel3;
+                                bricks = setUpBricks(brickColumnCount, brickRowCount);
+                                resetBall();
+                                scoreColor = "#c03e00";
+                                levelColor = "#c03e00";
+                                livesColor = "#c03e00";
+                                bricksColor = "#000000";
+                                paddleColor = "#c03e00";
+                                ballColor = "#c03e00";
+                                break;
+                            default:
+                                alert("champion du monde!!!!!!!");
+                                return document.location.reload();
+                        }
                     }
                 }
             }
@@ -140,7 +209,7 @@ function collisionDetection() {
  */
 function drawScore() {
     ctx.font = font;
-    ctx.fillStyle = color;
+    ctx.fillStyle = scoreColor;
     ctx.fillText("Score: "+score, 8, 20);
 }
 
@@ -149,7 +218,7 @@ function drawScore() {
  */
 function drawLevel() {
     ctx.font = font;
-    ctx.fillStyle = color;
+    ctx.fillStyle = levelColor;
     ctx.fillText("Level: "+level, canvas.width-500, 20);
 }
 
@@ -158,7 +227,7 @@ function drawLevel() {
  */
 function drawLives() {
     ctx.font = font;
-    ctx.fillStyle = color;
+    ctx.fillStyle = livesColor;
     ctx.fillText("Lives: "+lives, canvas.width-65, 20);
 }
 /**
@@ -192,42 +261,22 @@ function drawPaddle() {
  * leurs taille et leurs couleur
  */
 function drawBricks() {
-    if (level === 1) {
-        for(let c=0; c<brickColumnCount; c++) {
-            for(let r=0; r<brickRowCount; r++) {
-                if(bricks[c][r].status == 1){
-                    let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-                    let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
-                    bricks[c][r].x = brickX;
-                    bricks[c][r].y = brickY;
-                    ctx.beginPath();
-                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                    ctx.fillStyle = bricksColor;
-                    ctx.fill();
-                    ctx.closePath();
-                }
-            }
-        }
-    }
-    else if (level === 2) {
-        for(let c=0; c<brickColumnCount2; c++) {
-            for(let r=0; r<brickRowCount2; r++) {
-                if(bricks[c][r].status == 1){
-                    let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-                    let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
-                    bricks[c][r].x = brickX;
-                    bricks[c][r].y = brickY;
-                    ctx.beginPath();
-                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                    ctx.fillStyle = bricksColor;
-                    ctx.fill();
-                    ctx.closePath();
-                }
+    for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+            if (bricks[c][r].status == 1) {
+                let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+                let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+                bricks[c][r].x = brickX;
+                bricks[c][r].y = brickY;
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillStyle = bricksColor;
+                ctx.fill();
+                ctx.closePath();
             }
         }
     }
 }
-
 
 /**
  * La fonction padBall() elle, permet d'effacer la trainée laisser par l'affichage de la balle
@@ -268,15 +317,10 @@ function padBall() {
                 document.location.reload();
             }
             else {
-                x = canvas.width/2;
-                y = canvas.height-30;
-                dx = 2;
-                dy = -2;
-                paddleX = (canvas.width-paddleWidth)/2;
+                resetBall();
             }
         }
     }
-
 /**
  * Lorsque j'appui sur la touche de droite, je déplace mon paddle vers la droite,
  * si le point de départ du paddle + la largeur du paddle, est supérieur a la largeur de mon canvas, alors la raquette va sortir,
