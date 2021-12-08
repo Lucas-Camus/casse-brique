@@ -1,3 +1,6 @@
+// variable de debug
+const debug = true;
+
 // Cette variable permet d'enregistrer de la référence à l'élément <canvas> dans une variable <canvas>
 const canvas = document.getElementById("casse-brique");
 
@@ -109,6 +112,9 @@ let level = 1;
 // Cette contient un tableau de bricks vide
 let bricks = [];
 
+// VARIABLE NB DE BRICK NON CASSE DANS LE NIVEAU ACTUEL. ( multiplication ) stocker par default le nombre de brick dans le niveau 1
+let bricksLevel = brickColumnCount * brickRowCount;
+
 /**
  * Cette fonction contient un tableau vide a deux dimensions :
  * - une qui contiendra les colonnes de briques (c)
@@ -121,6 +127,8 @@ let bricks = [];
  * @returns {*}
  */
 function setUpBricks(column, row) {
+    if (debug) console.debug('set des bricks avec', column, row);
+
     let newBricks = [];
     for(let c=0; c<column; c++) {
         newBricks[c] = [];
@@ -128,6 +136,7 @@ function setUpBricks(column, row) {
             newBricks[c][r] = { x: 0, y: 0, status: 1 };
         }
     }
+    if (debug) console.debug('NewBricks:', newBricks);
 
     return newBricks;
 }
@@ -139,6 +148,7 @@ bricks = setUpBricks(brickColumnCount, brickRowCount);
  * (Center en bas du canvas)
  */
 function resetBall() {
+    if (debug) console.debug('resetBall');
     x = canvas.width / 2;
     y = canvas.height - 30;
     dx = 2;
@@ -165,25 +175,32 @@ function collisionDetection() {
                 if(x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                     dy = -dy;
                     b.status = 0;
+                    // decrementer la variable du nombre de brick
+                    bricksLevel--;
                     score++;
-                    if(score === brickRowCount * brickColumnCount){
+                    //nombre de brick = 0
+                    if(bricksLevel === 0){
                         alert("Bravo ! Vous avez détruit toutes les briques !");
                         level++;
                         switch(level){
                             case 2:
-                                score = 0;
+                                // set la variable avec le nombre de brick du level 2
+                                if (debug) console.warn(bricksLevel);
                                 brickColumnCount = brickColumnLevel2;
                                 brickRowCount = brickRowLevel2;
+                                bricksLevel = brickColumnCount * brickRowCount;
                                 bricks = setUpBricks(brickColumnCount, brickRowCount);
                                 resetBall();
-                                bricksColor = "#00a0ff";
-                                paddleColor = "#beb000";
-                                ballColor = "#beb000";
+                                bricksColor = "#ee00ff";
+                                paddleColor = "#309a01";
+                                ballColor = "#309a01";
                                 break;
                             case 3:
-                                score = 0;
+                                // set la variable avec le nombre de brick du level 3
+                                bricksLevel--;
                                 brickColumnCount = brickColumnLevel3;
                                 brickRowCount = brickRowLevel3;
+                                bricksLevel = brickColumnCount * brickRowCount;
                                 bricks = setUpBricks(brickColumnCount, brickRowCount);
                                 resetBall();
                                 scoreColor = "#c03e00";
